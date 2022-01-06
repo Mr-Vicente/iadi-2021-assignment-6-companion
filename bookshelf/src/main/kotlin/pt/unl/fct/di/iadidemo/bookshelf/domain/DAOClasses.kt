@@ -55,3 +55,9 @@ data class RoleDAO(
     @Id
     val tag:String
 )
+
+@Entity
+data class SessionDAO(
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    val id: Long
+)

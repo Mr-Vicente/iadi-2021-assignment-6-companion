@@ -28,8 +28,8 @@ import pt.unl.fct.di.iadidemo.bookshelf.presentation.api.dto.*
 class BookController(val books: BookService, val authors: AuthorService) : BooksAPI {
 
     @CanSeeBooks
-    override fun getAll(): List<BookListDTO> =
-        books.getAll().map {
+    override fun getAll(page: Int, size: Int): List<BookListDTO> =
+        books.getAll(page, size).map {
             BookListDTO(
                 it.id,
                 it.title,
@@ -39,10 +39,18 @@ class BookController(val books: BookService, val authors: AuthorService) : Books
         }
 
         @CanAddBook
-        override fun addOne(elem: BookDTO):Unit {
+        override fun addOne(elem: BookDTO): BookListDTO {
             val authors = authors.findByIds(elem.authors) // May return 400 (invalid request) if they do not exist
 
-            books.addOne(BookDAO(0, elem.title, authors.toMutableList(), elem.images.map { ImageDAO(0, it ) }));
+            return books.addOne(BookDAO(0, elem.title, authors.toMutableList(),
+                elem.images.map { ImageDAO(0, it ) })).let {
+                    BookListDTO(
+                        it.id,
+                        it.title,
+                        it.authors.map { AuthorsBookDTO(it.name) },
+                        it.images.map { ImageDTO(it.url) }
+                    )
+                }
         }
 
         @CanSeeBook
@@ -60,14 +68,20 @@ class BookController(val books: BookService, val authors: AuthorService) : Books
                 }
 
         @CanUpdateBook
-        override fun updateOne(id: Long, elem: BookDTO) {
+        override fun updateOne(id: Long, elem: BookDTO): BookListDTO {
             val authors = authors.findByIds(elem.authors) // May return 400 (invalid request) if they do not exist
 
-            books.updateOne(id, BookDAO(0, elem.title, authors.toMutableList(), elem.images.map { ImageDAO(0, it ) }))
+            return books.updateOne(id, BookDAO(0, elem.title, authors.toMutableList(),
+                elem.images.map { ImageDAO(0, it ) })).let {
+                    BookListDTO(
+                        it.id,
+                        it.title,
+                        it.authors.map { AuthorsBookDTO(it.name) },
+                        it.images.map { ImageDTO(it.url) }
+                    )
+                }
         }
 
         @CanDeleteBook
-        override fun deleteOne(id: Long) {
-            TODO("Not implemented")
-        }
+        override fun deleteOne(id: Long) { books.deleteOne(id) }
 }
