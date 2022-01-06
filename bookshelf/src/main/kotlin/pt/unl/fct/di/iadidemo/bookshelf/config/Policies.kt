@@ -16,17 +16,24 @@ annotation class CanSeeBooks {
     }
 }
 
+@PreAuthorize(CanSeeAuthors.condition)
+annotation class CanSeeAuthors {
+    companion object {
+        const val condition:String = "true"
+    }
+}
+
 @PreAuthorize(CanAddBook.condition)
 annotation class CanAddBook {
     companion object {
-        const val condition:String = "hasRole('USER')"
+        const val condition:String = "hasRole('USER') or " + CanUpdateBook.condition
     }
 }
 
 @PreAuthorize(CanUpdateBook.condition)
 annotation class CanUpdateBook {
     companion object {
-        const val condition:String = "hasRole('REVIEWER')"
+        const val condition:String = "hasRole('REVIEWER') or " + CanDeleteBook.condition
     }
 }
 

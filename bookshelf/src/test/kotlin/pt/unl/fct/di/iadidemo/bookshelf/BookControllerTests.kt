@@ -43,7 +43,7 @@ class BookControllerTests {
     @Test
     @WithMockUser(username = "user1", password = "password1", roles = ["USER"])
     fun `Test GET books`() {
-        Mockito.`when`(books.getAll()).thenReturn(l)
+        Mockito.`when`(books.getAll(0,3)).thenReturn(l)
 
         val s =
             mvc.perform(get("/user/books"))
@@ -55,7 +55,7 @@ class BookControllerTests {
     @Test
     @WithMockUser(username = "admin1", password = "password1", roles = ["ADMIN"])
     fun `Admin Test GET books`() {
-        Mockito.`when`(books.getAll()).thenReturn(l)
+        Mockito.`when`(books.getAll(0,3)).thenReturn(l)
 
         val s =
             mvc.perform(get("/admin/books"))

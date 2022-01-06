@@ -1,5 +1,6 @@
 package pt.unl.fct.di.iadidemo.bookshelf.application.services
 
+import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
 import pt.unl.fct.di.iadidemo.bookshelf.application.services.exceptions.NoBookException
 import pt.unl.fct.di.iadidemo.bookshelf.domain.BookDAO
@@ -24,13 +25,13 @@ import java.util.*
 @Service
 class BookService(val books: BookRepository) {
 
-    fun getAll(): List<BookDAO> = books.findAll().toList()
+    fun getAll(page: Int, size: Int): List<BookDAO> = books.findAll(PageRequest.of(page,size)).toList()
 
-    fun addOne(book: BookDAO):Unit { books.save(book) }
+    fun addOne(book: BookDAO): BookDAO = books.save(book)
 
     fun getOne(id:Long): Optional<BookDAO> = books.findById(id)
 
-    fun updateOne(id:Long, update: BookDAO): Unit {
+    fun updateOne(id:Long, update: BookDAO): BookDAO {
         val maybeBook = books.findById(id)
 
         val book = maybeBook.orElseThrow { NoBookException("Book with ${id} was found") }
@@ -38,7 +39,9 @@ class BookService(val books: BookRepository) {
         book.images = update.images
         book.title = update.title
 
-        books.save(book)
+        return books.save(book)
     }
+
+    fun deleteOne(id:Long) { books.deleteById(id) }
 
 }
