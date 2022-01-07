@@ -28,6 +28,7 @@ class SecurityConfig(
             .cors().and().csrf().disable() // This allows applications to access endpoints from any source location
             .authorizeRequests()
             .antMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+            .antMatchers("/user/books").permitAll()
             .anyRequest().authenticated()
             .and().httpBasic()
             // Missing the sign-up, sign-in and sign-out endpoints
